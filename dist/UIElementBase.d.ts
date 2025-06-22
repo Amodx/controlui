@@ -1,0 +1,35 @@
+import { UIElementActivedEvent, UIElementDeActivedEvent, UIElementReadyEvent, UINextElementEvent, UIUpdateEvent } from "./UI.event";
+import { UIUpdateDirections } from "./UI.types";
+import { UIScreen } from "./UI.elements";
+import { UIContainerBase } from "./UIContainerBase";
+export declare abstract class UIElementBase extends HTMLElement {
+    get layoutId(): number;
+    set layoutId(active: number);
+    get active(): boolean;
+    set active(active: boolean);
+    private _uiParent;
+    get parent(): UIContainerBase;
+    get isActive(): boolean;
+    screen: UIScreen;
+    uiElement: true;
+    constructor();
+    activate(): void;
+    deactivate(): void;
+    onready: (event: UIElementReadyEvent) => void;
+    addOnReady(listener: (event: UIElementReadyEvent) => void): void;
+    removeOnReady(listener: Function): void;
+    onuiupdate: (event: UIUpdateEvent) => void;
+    addOnUIUpdate(listener: (event: UIUpdateEvent) => void): void;
+    removeOnUIUpdate(listener: Function): void;
+    onnextelement: (event: UINextElementEvent) => void;
+    addOnNextElement(listener: (event: UINextElementEvent) => void): void;
+    removeOnNextElement(listener: Function): void;
+    onactived: (event: UIElementActivedEvent) => void;
+    addOnActived(listener: (event: UIElementActivedEvent) => void): void;
+    removeOnActived(listener: Function): void;
+    ondeactived: (event: UIElementDeActivedEvent) => void;
+    addOnDeActived(listener: (event: UIElementDeActivedEvent) => void): void;
+    removeOnDeActived(listener: Function): void;
+    nextElement(direction: UIUpdateDirections, onDone?: (nextElm: boolean) => void): void;
+    findContext(): void;
+}

@@ -92,20 +92,18 @@ export class UIRootElement extends HTMLElement {
     this.dataset["active"] = String(active ? 1 : 0);
   }
   observer: MutationObserver;
-  childrenMap = new Map<string, UIElementBase>();
-
+  childrenMap: UIElementBase[] = [];
   constructor() {
     super();
 
     this.observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === "childList") {
-          this.childrenMap.clear();
+          this.childrenMap = [];
           this.travsereAddChildren(this);
         }
       });
     });
-    this.observer.observe(this, { childList: true });
   }
 
   private _updating = false;
@@ -120,6 +118,7 @@ export class UIRootElement extends HTMLElement {
   onunmount: (elm: UIRootElement) => void | Promise<void>;
 
   connectedCallback() {
+    this.observer.observe(this, { childList: true });
     this.travsereAddChildren(this);
     if (this.onmount) this.onmount(this);
   }
@@ -133,10 +132,11 @@ export class UIRootElement extends HTMLElement {
     if (this.isUpdating()) return false;
     if (!this.active) return;
     const event = new UIUpdateEvent(update, this as any);
-    for (const [key, uiElm] of this.childrenMap) {
+    for (const uiElm of this.childrenMap) {
       if (!uiElm.active) continue;
       event.origin = uiElm;
       uiElm.dispatchEvent(event.clone(uiElm));
+      break;
     }
     return true;
   }
@@ -149,7 +149,7 @@ export class UIRootElement extends HTMLElement {
 
   processChildren(element: Element) {
     if ((element as UIElementBase).uiElement) {
-      this.childrenMap.set(element.id, element as UIElementBase);
+      this.childrenMap.push(element as UIElementBase);
       return true;
     }
     this.travsereAddChildren(element);

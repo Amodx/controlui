@@ -1,6 +1,6 @@
 {
   "name": "@amodx-elms/controlui",
-  "version": "0.0.0",
+  "version": "0.0.12",
   "module": "index.js",
   "types": "index.d.ts",
   "type": "module",

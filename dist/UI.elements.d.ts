@@ -28,7 +28,7 @@ export declare class UIRootElement extends HTMLElement {
     get active(): boolean;
     set active(active: boolean);
     observer: MutationObserver;
-    childrenMap: Map<string, UIElementBase>;
+    childrenMap: UIElementBase[];
     constructor();
     private _updating;
     setUpdating(updating: boolean): void;

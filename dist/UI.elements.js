@@ -86,18 +86,17 @@ export class UIRootElement extends HTMLElement {
         this.dataset["active"] = String(active ? 1 : 0);
     }
     observer;
-    childrenMap = new Map();
+    childrenMap = [];
     constructor() {
         super();
         this.observer = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.type === "childList") {
-                    this.childrenMap.clear();
+                    this.childrenMap = [];
                     this.travsereAddChildren(this);
                 }
             });
         });
-        this.observer.observe(this, { childList: true });
     }
     _updating = false;
     setUpdating(updating) {
@@ -109,6 +108,7 @@ export class UIRootElement extends HTMLElement {
     onmount;
     onunmount;
     connectedCallback() {
+        this.observer.observe(this, { childList: true });
         this.travsereAddChildren(this);
         if (this.onmount)
             this.onmount(this);
@@ -124,11 +124,12 @@ export class UIRootElement extends HTMLElement {
         if (!this.active)
             return;
         const event = new UIUpdateEvent(update, this);
-        for (const [key, uiElm] of this.childrenMap) {
+        for (const uiElm of this.childrenMap) {
             if (!uiElm.active)
                 continue;
             event.origin = uiElm;
             uiElm.dispatchEvent(event.clone(uiElm));
+            break;
         }
         return true;
     }
@@ -139,7 +140,7 @@ export class UIRootElement extends HTMLElement {
     }
     processChildren(element) {
         if (element.uiElement) {
-            this.childrenMap.set(element.id, element);
+            this.childrenMap.push(element);
             return true;
         }
         this.travsereAddChildren(element);
